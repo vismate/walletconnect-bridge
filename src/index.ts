@@ -38,7 +38,7 @@ const app = fastify({
       levelFirst: true,
       translateTime: true
     },
-    prettifier: require('../lib/pretty'),
+    prettifier: require('./lib/pretty'),
     level: process.env.LOG_LEVEL || 'info',
     file: process.env.LOG_FILE || undefined
   }
