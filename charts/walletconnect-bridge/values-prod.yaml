@@ -1,0 +1,28 @@
+replicaCount: 1
+image:
+  repository: dimozone/walletconnect-bridge
+  pullPolicy: IfNotPresent
+  tag: d0c1fa5
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/limit-rps: '10'
+    external-dns.alpha.kubernetes.io/hostname: walletconnect.dimo.zone
+  hosts:
+    - host: walletconnect.dimo.zone
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 192Mi

@@ -1,0 +1,71 @@
+replicaCount: 1
+image:
+  repository: dimozone/walletconnect-bridge
+  pullPolicy: IfNotPresent
+  tag: d0c1fa5
+
+imagePullSecrets: []
+nameOverride: ''
+fullnameOverride: ''
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ''
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1001
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - all
+service:
+  type: ClusterIP
+  ports:
+    http:
+      port: 5000
+      targetPort: http
+      protocol: TCP
+ports:
+  - name: http
+    containerPort: 5000
+    protocol: TCP
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/auth-tls-secret: ingress/cf-origin-ca
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/limit-rps: '10'
+    external-dns.alpha.kubernetes.io/hostname: walletconnect.dev.dimo.zone
+  hosts:
+    - host: walletconnect.dev.dimo.zone
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 384Mi
+  requests:
+    cpu: 100m
+    memory: 192Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podDisruptionBudget:
+  minAvailable: 0

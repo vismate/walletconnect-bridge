@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "walletconnect-bridge.fullname" . }}
+  labels:
+    {{- include "walletconnect-bridge.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+    {{- include "walletconnect-bridge.selectorLabels" . | nindent 6 }}
+{{ toYaml .Values.podDisruptionBudget | indent 2 }}

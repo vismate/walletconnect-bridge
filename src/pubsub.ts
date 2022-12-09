@@ -47,7 +47,7 @@ const getPub = function (topic: string): ISocketMessage[] {
 
 function socketSend (socket: WebSocket, socketMessage: ISocketMessage) {
   if (socket.readyState === 1) {
-    console.log('OUT =>', socketMessage)
+    console.log(`{ "event": "messageSent", "topic": ${JSON.stringify(socketMessage)}}`)
     socket.send(JSON.stringify(socketMessage))
   } else {
     setPub(socketMessage, socketMessage.topic)
@@ -63,9 +63,8 @@ const SubController = (socket: WebSocket, socketMessage: ISocketMessage) => {
   let time = Date.now()
 
   const subscriber = { topic, socket, time }
-
   setSub(subscriber, topic)
-
+  console.log(`{ "event": "newSubscriber", "topic": ${JSON.stringify(topic)}}`)
   const pending = getPub(topic)
 
   if (pending && pending.length) {
@@ -104,8 +103,7 @@ export default (app: FastifyInstance, socket: WebSocket, data: WebSocket.Data) =
 
       try {
         socketMessage = JSON.parse(message)
-
-        console.log('IN  =>', socketMessage)
+        console.log(`{ "event": "messageReceived", "message": ${JSON.stringify(socketMessage)}}`)
         
         switch (socketMessage.type) {
           case 'sub':
@@ -131,6 +129,7 @@ export const cleanUpSub = (socket: WebSocket) => {
       sub = sub.filter(s => s.socket !== socket)
       subs.set(topic,sub)
       if (sub.length < 1) {
+        console.log(`{ "event": "deletedTopic", "topic": ${JSON.stringify(topic)}}`)
         subs.delete(topic)
       }
     }
@@ -153,3 +152,4 @@ export const cleanUpPub = () => {
     }
   }
 }
+
