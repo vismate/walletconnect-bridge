@@ -1,23 +1,21 @@
-FROM node:11-alpine
+FROM node:lts as builder
 
-# minimal apk dependencies to be safe
-ENV PACKAGES="curl ca-certificates" \
-    NODE_ENV="production" \
-    HOST="0.0.0.0:8080"
-
+# Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json yarn.lock ./
+# Install app dependencies
+COPY  . /usr/src/app
 
-RUN apk add --no-cache $PACKAGES && \
-    yarn --prod
+RUN npm ci
+RUN npm run build
+RUN ls /usr/src/app/src
+FROM node:lts-slim
 
-COPY . .
-
-# Run as non-root user for security
-USER 1000
-
-# Expose app port (8080/tcp)
+COPY --from=builder /usr/src/app/ /app
+# Create app directory
+WORKDIR /app
+RUN ls /app
+RUN ls /app/dist
 EXPOSE 8080
 
-CMD [ "yarn", "start" ]
+CMD [ "node", "dist/src/index.js" ]
