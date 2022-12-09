@@ -28,17 +28,6 @@ const noop = () => {}
 
 const app = fastify({
   logger: {
-    serializers: {
-      req: (req: IncomingMessage) => req.url,
-      res: (res: OutgoingMessage) => inspect(res)
-    },
-    prettyPrint: {
-      crlf: false,
-      colorize: false,
-      levelFirst: true,
-      translateTime: true
-    },
-    prettifier: require('./lib/pretty'),
     level: process.env.LOG_LEVEL || 'info',
     file: process.env.LOG_FILE || undefined
   }
