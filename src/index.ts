@@ -28,7 +28,7 @@ const noop = () => {}
 
 const app = fastify({
   logger: {
-    level: process.env.LOG_LEVEL || 'info',
+    level: process.env.LOG_LEVEL || 'error',
     file: process.env.LOG_FILE || undefined
   }
 })
