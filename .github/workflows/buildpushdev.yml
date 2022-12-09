@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Dockerfile
+          file: ./resources/docker/Dockerfile
           push: true
           tags: dimozone/walletconnect-bridge:${{ steps.slug.outputs.sha7 }}, dimozone/walletconnect-bridge:latest
 
