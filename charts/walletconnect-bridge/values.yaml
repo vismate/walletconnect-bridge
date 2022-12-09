@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: dimozone/walletconnect-bridge
   pullPolicy: IfNotPresent
-  tag: ae4c5cc
+  tag: cf1b5e9
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
