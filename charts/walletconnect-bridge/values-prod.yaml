@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: dimozone/walletconnect-bridge
   pullPolicy: IfNotPresent
-  tag: ee89166
+  tag: 3544ccb
 ingress:
   enabled: true
   className: nginx
