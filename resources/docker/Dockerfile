@@ -1,21 +1,31 @@
-FROM node:lts as builder
+FROM golang:1.19 AS build
 
-# Create app directory
-WORKDIR /usr/src/app
+RUN useradd -u 1000 dimo
 
-# Install app dependencies
-COPY  . /usr/src/app
+WORKDIR /go/src/github.com/DIMO-Network/walletconnect-bridge/
+COPY . /go/src/github.com/DIMO-Network/walletconnect-bridge/
 
-RUN npm install
-RUN npm run build
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOFLAGS=-mod=vendor
+ENV GOARCH=amd64
 
+RUN go mod vendor
+RUN go mod tidy
+RUN make build-linux
 
-FROM node:lts-slim
+FROM busybox AS package
 
-COPY --from=builder /usr/src/app/ /app
-# Create app directory
+LABEL maintainer="DIMO <hello@dimo.zone>"
+
 WORKDIR /app
 
-EXPOSE 8080
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /go/src/github.com/DIMO-Network/walletconnect-bridge/walletconnect-bridge /app
 
-CMD [ "node", "dist/src/index.js" ]
+USER dimo
+
+EXPOSE 8080
+RUN ls /app
+ENTRYPOINT ["/app/walletconnect-bridge"]

@@ -1,13 +1,25 @@
-# Licensed under MIT.
-# Copyright (2016) by Kevin van Zonneveld https://twitter.com/kvz
+#!/usr/bin/make -f
 
-define npm_script_targets
-TARGETS := $(shell node -e 'for (var k in require("./package.json").scripts) {console.log(k.replace(/:/g, "-"));}')
-$$(TARGETS):
-	yarn run $(subst -,:,$(MAKECMDGOALS))
+export GOPROXY=https://goproxy.io,direct
+export GO111MODULE=on
 
-.PHONY: $$(TARGETS)
-endef
+.PHONY: build-linux go.mod install docker format test
 
-$(eval $(call npm_script_targets))
+build-linux:
+	LEDGER_ENABLED=false CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o walletconnect-bridge .
 
+go.mod:
+	@go mod tidy && go mod verify && go mod download
+
+install:
+	@go install -v .
+
+docker: build-linux
+	@docker rmi -f dimozone/go-wallet-bridge:latest
+	@docker build --no-cache -f Dockerfile -t dimozone/go-wallet-bridge:latest .
+
+format:
+	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs gofmt -w -s
+
+test:
+	@go test -short -cover
