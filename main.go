@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -17,9 +16,6 @@ import (
 func main() {
 	addr := flag.String("addr", "0.0.0.0:8080", "Server listening addr")
 	level := flag.String("level", "WARNING", "Server log level")
-	isHttps := flag.Bool("https", false, "Start the HTTPS")
-	certFile := flag.String("cert", "cert.pem", "TLS cert file")
-	keyFile := flag.String("key", "key.pem", "TLS key file")
 	flag.Parse()
 
 	logLevel, err := logging.LogLevel(strings.ToUpper(*level))
@@ -43,13 +39,8 @@ func main() {
 	srv := &http.Server{Addr: *addr, Handler: router}
 	go func() {
 		var err error
-		if *isHttps {
-			log.Info("Server Listen On:", "https://"+srv.Addr)
-			err = srv.ListenAndServeTLS(GetFileName(*certFile), GetFileName(*keyFile))
-		} else {
-			log.Info("Server Listen On:", "http://"+srv.Addr)
-			err = srv.ListenAndServe()
-		}
+		log.Info("Server Listen On:", "http://"+srv.Addr)
+		err = srv.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
@@ -69,16 +60,4 @@ func main() {
 	} else {
 		log.Info("Server exiting.")
 	}
-}
-
-func GetFileName(name string) string {
-	if _, err := os.Stat(name); err == nil {
-		return name
-	}
-	name = filepath.Join(os.Getenv("GOPATH"),
-		"/src/github.com/zhcppy/go-walletconnect-bridge", name)
-	if _, err := os.Stat(name); err == nil {
-		return name
-	}
-	panic("No found file: " + name)
 }

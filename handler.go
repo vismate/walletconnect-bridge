@@ -9,7 +9,7 @@ import (
 const (
 	version    = "v0.0.1-beta"
 	name       = "zhcppy"
-	repository = "https://github.com/zhcppy/go-walletconnect-bridge"
+	repository = "https://github.com/DIMO-Network/walletconnect-bridge"
 )
 
 func HealthHandler(ctx *gin.Context) {
