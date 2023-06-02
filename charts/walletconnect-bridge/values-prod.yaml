@@ -13,9 +13,9 @@ ingress:
     nginx.ingress.kubernetes.io/auth-tls-verify-client: 'on'
     nginx.ingress.kubernetes.io/enable-cors: 'true'
     nginx.ingress.kubernetes.io/limit-rps: '10'
-    external-dns.alpha.kubernetes.io/hostname: walletconnect.dimo.zone
+    external-dns.alpha.kubernetes.io/hostname: dimo-bridge.dimo.zone
   hosts:
-    - host: walletconnect.dimo.zone
+    - host: dimo-bridge.dimo.zone
       paths:
         - path: /
           pathType: ImplementationSpecific
