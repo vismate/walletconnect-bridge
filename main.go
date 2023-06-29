@@ -15,7 +15,7 @@ import (
 
 func main() {
 	addr := flag.String("addr", "0.0.0.0:8080", "Server listening addr")
-	level := flag.String("level", "WARNING", "Server log level")
+	level := flag.String("level", "INFO", "Server log level")
 	flag.Parse()
 
 	logLevel, err := logging.LogLevel(strings.ToUpper(*level))
@@ -39,7 +39,7 @@ func main() {
 	srv := &http.Server{Addr: *addr, Handler: router}
 	go func() {
 		var err error
-		log.Info("Server Listen On:", "http://"+srv.Addr)
+		log.Info("Server Listening On:", "http://"+srv.Addr)
 		err = srv.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)

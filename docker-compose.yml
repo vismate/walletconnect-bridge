@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  walletconnect-bridge-v1:
+    build:
+      context: .
+      dockerfile: resources/docker/Dockerfile
+    image: walletconnect-bridge-v1:latest
+    ports:
+      - '8080:8080'
